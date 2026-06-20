@@ -1,0 +1,178 @@
+# Assignment 1 — Arduino Fundamentals
+
+### Variables, Functions, LEDs, while Loops & Serial Monitor
+
+**Name:** Sharon Eyram Amekudzi
+**Index Number:** 2526401504
+**Course:** Programming C++ for Engineers Using Arduino — GCTU
+
+---
+
+## Task 1 — Hello, Serial!
+
+### Question 1. What is the difference between `int` and `float`? Give one example of when you would use each.
+
+An `int` (integer) is used to store whole numbers without decimal points, such as 19 for a person's age. A `float`, on the other hand, is used to store numbers with decimal points, making it suitable for measurements like height, for example 1.72 meters.
+
+### Question 2. What happens if you forget to write `Serial.begin(9600)` in `setup()`? Try it and explain what you observe.
+
+When `Serial.begin(9600)` is omitted, the Arduino does not initialize serial communication with the computer. As a result, the Serial Monitor cannot properly receive data from the board, and no readable output is displayed because the communication speed is not synchronized.
+
+### Question 3. Why does the output appear only once and not over and over?
+
+The output appears only once because the printing commands are placed inside `setup()`, which executes only once when the Arduino board is powered on or reset.
+
+---
+
+## Task 2 — Your First Blink (Using Variables)
+
+### Question 1. Why do we put `pinMode(ledPin, OUTPUT);` inside `setup()` and not inside `loop()`?
+
+We place `pinMode(ledPin, OUTPUT);` inside `setup()` because the pin only needs to be configured once when the board starts up. Putting it inside `loop()` would repeatedly configure the pin, which is unnecessary and inefficient.
+
+### Question 2. What would happen if we removed both `delay()` calls? Predict first, then try it and describe what you actually see.
+
+I predicted that without the delays, the LED would switch between ON and OFF extremely fast—faster than the human eye can perceive. After testing it, I observed that the LED appeared to remain continuously ON, although it looked slightly dimmer because it was switching states very rapidly.
+
+### Question 3. If you wanted the LED to be ON for 3 seconds and OFF for half a second, which values would you change and to what?
+
+I would change the value of the `onTime` variable to **3000** milliseconds and the value of the `offTime` variable to **500** milliseconds.
+
+```cpp
+int onTime = 3000;
+int offTime = 500;
+```
+
+---
+
+## Task 3 — Make It a Function
+
+### Question 1. In your own words, explain what a parameter is.
+
+A parameter is a variable that is declared in a function definition and acts as an input to the function. It allows the function to receive different values whenever it is called, making the function more flexible and reusable.
+
+### Question 2. Why is it useful to put repeating code into a function instead of writing it three times in `loop()`?
+
+Using a function for repeating code keeps the program organized, easier to read, and easier to maintain. If the blinking behavior needs to be changed later, the modification only needs to be made in one place instead of multiple locations throughout the program.
+
+### Question 3. Could you write `blinkOnce` without taking any parameter at all? If yes, how would you make it blink at different speeds without parameters?
+
+Yes, `blinkOnce` could be written without parameters. However, it would be less flexible. To make it blink at different speeds, global variables could be used to store the delay values, and these variables could be modified before calling the function.
+
+---
+
+## Task 4 — Count Down with a while Loop
+
+### Question 1. What is the role of the line `counter = counter - 1;`? What would happen without it?
+
+The purpose of this line is to reduce the value of the `counter` variable by 1 during each iteration of the loop. It serves as the exit mechanism for the loop.
+
+Without this statement, the value of `counter` would remain unchanged. Since the loop condition would continue to be true, the program would enter an infinite loop, repeatedly printing the same value and never reaching `"Liftoff!"` or any code after the loop.
+
+### Question 2. Rewrite the countdown to start from 7 instead of 5.
+
+```cpp
+int count = 7;
+```
+
+This will make the countdown start from 7 instead of 5.
+
+### Question 3. In your own words, what is the difference between `setup()` and a `while` loop? They both run code — what makes them different?
+
+Although both execute code, they serve different purposes.
+
+`setup()` is a special Arduino function that runs automatically once when the board powers on or resets. It is mainly used to initialize hardware and configure settings.
+
+A `while` loop is a control structure that repeatedly executes a block of code as long as a specified condition remains true. It can be used inside `setup()` or `loop()` and may execute many times depending on the condition.
+
+---
+
+## Task 5 — Putting It All Together: Smart Countdown
+
+### Question 1. Paste your final, working code.
+
+```cpp
+int startValue = 5;
+int ledPin = 13;
+
+// Function to blink the LED
+void flashLED(int times) {
+  int i = 0;
+
+  while (i < times) {
+    digitalWrite(ledPin, HIGH);
+    delay(300);
+
+    digitalWrite(ledPin, LOW);
+    delay(300);
+
+    i++;
+  }
+}
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+
+  Serial.begin(9600);
+
+  Serial.println("=== Smart Countdown Starting ===");
+
+  int count = startValue;
+
+  while (count > 0) {
+    Serial.print("Count: ");
+    Serial.println(count);
+
+    flashLED(count);
+
+    delay(1000);
+
+    count = count - 1;
+  }
+
+  Serial.println("=== Countdown Complete ===");
+}
+
+void loop() {
+}
+```
+
+### Question 2. Describe one bug or mistake you ran into while writing this program and how you fixed it.
+
+One mistake I ran into was forgetting to include `pinMode(ledPin, OUTPUT);` in `setup()`. When I uploaded the program, the LED did not blink even though the code compiled successfully. After reviewing my code and comparing it with earlier examples, I realized that the pin had not been configured as an output. I added the missing line, uploaded the program again, and the LED started working correctly.
+
+### Question 3. If you wanted the program to count DOWN by 2 each step (5, 3, 1) instead of by 1, what would you change?
+
+Inside the `while` loop, I would change:
+
+```cpp
+count = count - 1;
+```
+
+to:
+
+```cpp
+count = count - 2;
+```
+
+This would make the countdown decrease by two each time, producing the sequence:
+
+```text
+5, 3, 1
+```
+
+### Question 4. If you wanted the LED to also stay ON for a final 5 seconds after the countdown completes, where in the code would you add this and what would the code look like?
+
+I would add the code after the `while` loop finishes, inside `setup()`.
+
+```cpp
+Serial.println("=== Countdown Complete ===");
+
+digitalWrite(ledPin, HIGH);
+
+delay(5000);
+
+digitalWrite(ledPin, LOW);
+```
+
+This code turns the LED ON, keeps it ON for 5 seconds (5000 milliseconds), and then turns it OFF.
