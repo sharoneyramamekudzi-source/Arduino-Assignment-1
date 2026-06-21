@@ -25,4 +25,4 @@ When the countdown finishes, it prints "=== Countdown Complete ===".
 4. Click Upload, then open Tools > Serial Monitor (9600 baud).
 
 ## Author
-[Your Full Name] — [2526401504]
+[Sharon Eyram Amekudzi] — [2526401504]
